@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { View, Text, Modal, TextInput, Button, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  Modal,
+  TextInput,
+  Button,
+  StyleSheet,
+  TouchableHighlight,
+} from "react-native";
 
 interface ModalWindowProps {
   visible: boolean;
@@ -7,7 +15,11 @@ interface ModalWindowProps {
   onAddList: (listName: string) => void;
 }
 
-const ModalWindow: React.FC<ModalWindowProps> = ({ visible, onClose, onAddList }) => {
+const ModalWindow: React.FC<ModalWindowProps> = ({
+  visible,
+  onClose,
+  onAddList,
+}) => {
   const [listName, setListName] = useState("");
 
   const handleAddList = () => {
@@ -29,8 +41,12 @@ const ModalWindow: React.FC<ModalWindowProps> = ({ visible, onClose, onAddList }
             value={listName}
             onChangeText={setListName}
           />
-          <Button title="Добавить" onPress={handleAddList} />
-          <Button title="Отмена" onPress={onClose} />
+          <TouchableHighlight style={styles.modalBtn} onPress={handleAddList}>
+            <Text style={styles.modalBtnText}>Добавить</Text>
+          </TouchableHighlight>
+          <TouchableHighlight style={styles.modalBtn} onPress={onClose}>
+            <Text style={styles.modalBtnText}>Закрыть</Text>
+          </TouchableHighlight>
         </View>
       </View>
     </Modal>
@@ -62,6 +78,18 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     marginBottom: 10,
     paddingHorizontal: 10,
+  },
+  modalBtn: {
+    width: 80,
+    height: 30,
+    backgroundColor: "#808080",
+    marginBottom: 10,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalBtnText: {
+    color: "#ffffff",
   },
 });
 
