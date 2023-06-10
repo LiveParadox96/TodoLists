@@ -8,24 +8,33 @@ import {
   StyleSheet,
   TouchableHighlight,
 } from "react-native";
+import DatePicker from "react-native-datepicker";
 
 interface ModalWindowProps {
   visible: boolean;
   onClose: () => void;
-  onAddList: (listName: string) => void;
+  onAddTask: (listIndex: number, taskName: string, taskDate: string) => void;
+  listIndex: number;
 }
 
 const ModalWindow: React.FC<ModalWindowProps> = ({
   visible,
   onClose,
-  onAddList,
+  onAddTask,
+  listIndex,
 }) => {
-  const [listName, setListName] = useState("");
+  const [taskName, setTaskName] = useState("");
+  const [taskDate, setTaskDate] = useState("");
 
-  const handleAddList = () => {
-    if (listName.trim() !== "") {
-      onAddList(listName);
-      setListName("");
+  const handleAddTask = (
+    listIndex: number,
+    taskName: string,
+    taskDate: string
+  ) => {
+    if (taskName.trim() !== "" && taskDate !== "") {
+      onAddTask(listIndex, taskName, taskDate);
+      setTaskName("");
+      setTaskDate("");
     }
     onClose();
   };
@@ -34,14 +43,24 @@ const ModalWindow: React.FC<ModalWindowProps> = ({
     <Modal visible={visible} animationType="slide" transparent={true}>
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Добавить список</Text>
+          <Text style={styles.modalTitle}>Добавить задачу</Text>
           <TextInput
             style={styles.textInput}
-            placeholder="Название списка"
-            value={listName}
-            onChangeText={setListName}
+            placeholder="Название задачи"
+            value={taskName}
+            onChangeText={setTaskName}
           />
-          <TouchableHighlight style={styles.modalBtn} onPress={handleAddList}>
+          <DatePicker
+            style={styles.datePicker}
+            date={taskDate}
+            mode="date"
+            format="YYYY-MM-DD"
+            onDateChange={setTaskDate}
+          />
+          <TouchableHighlight
+            style={styles.modalBtn}
+            onPress={() => handleAddTask(listIndex, taskName, taskDate)}
+          >
             <Text style={styles.modalBtnText}>Добавить</Text>
           </TouchableHighlight>
           <TouchableHighlight style={styles.modalBtn} onPress={onClose}>
@@ -90,6 +109,10 @@ const styles = StyleSheet.create({
   },
   modalBtnText: {
     color: "#ffffff",
+  },
+  datePicker: {
+    width: 200,
+    marginBottom: 10,
   },
 });
 
