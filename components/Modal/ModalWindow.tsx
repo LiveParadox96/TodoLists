@@ -25,7 +25,7 @@ type Task = {
   date: string;
 };
 
-const ModalWindow: React.FC<ModalWindowProps> = ({
+const ModalWindow: React.FC<ModalWindowProps> = React.memo(({
   modalVisible,
   setModalVisible,
   handleAddTask,
@@ -130,7 +130,7 @@ const ModalWindow: React.FC<ModalWindowProps> = ({
       </View>
     </Modal>
   );
-};
+});
 
 const styles = StyleSheet.create({
   modalContainer: {
