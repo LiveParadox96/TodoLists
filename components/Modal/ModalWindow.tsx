@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { Calendar } from "react-native-calendars";
+import moment from "moment";
 
 type ModalWindowProps = {
   modalVisible: boolean;
@@ -25,112 +26,113 @@ type Task = {
   date: string;
 };
 
-const ModalWindow: React.FC<ModalWindowProps> = React.memo(({
-  modalVisible,
-  setModalVisible,
-  handleAddTask,
-  taskList,
-}) => {
-  const [taskName, setTaskName] = useState("");
-  const [taskDate, setTaskDate] = useState("");
-  const [taskNameError, setTaskNameError] = useState("");
-  const [taskDateError, setTaskDateError] = useState("");
-  const [showCalendar, setShowCalendar] = useState(false);
+const ModalWindow: React.FC<ModalWindowProps> = React.memo(
+  ({ modalVisible, setModalVisible, handleAddTask, taskList }) => {
+    const [taskName, setTaskName] = useState("");
+    const [taskDate, setTaskDate] = useState("");
+    const [taskNameError, setTaskNameError] = useState("");
+    const [taskDateError, setTaskDateError] = useState("");
+    const [showCalendar, setShowCalendar] = useState(false);
 
-  const handleConfirm = () => {
-    if (!validateFields()) {
-      return;
-    }
-    handleAddTask(taskName, taskDate);
-    setTaskName("");
-    setTaskDate("");
-    setModalVisible(false);
-  };
+    const handleConfirm = () => {
+      if (!validateFields()) {
+        return;
+      }
+      handleAddTask(taskName, taskDate);
+      setTaskName("");
+      setTaskDate("");
+      setModalVisible(false);
+    };
 
-  const handleClose = () => {
-    setModalVisible(false);
-  };
+    const handleClose = () => {
+      setModalVisible(false);
+    };
 
-  const handleToggleCalendar = () => {
-    setShowCalendar(!showCalendar);
-  };
+    const handleToggleCalendar = () => {
+      setShowCalendar(!showCalendar);
+    };
 
-  const handleDayPress = (date: any) => {
-    setTaskDate(date.dateString);
-    setShowCalendar(false);
-  };
+    const handleDayPress = (date: any) => {
+      const formattedDate = moment(date.dateString).format("DD-MM-YYYY");
+      setTaskDate(formattedDate);
+      setShowCalendar(false);
+    };
 
-  const validateFields = () => {
-    let valid = true;
-    setTaskNameError("");
-    setTaskDateError("");
+    const validateFields = () => {
+      let valid = true;
+      setTaskNameError("");
+      setTaskDateError("");
 
-    if (taskName.trim() === "") {
-      setTaskNameError("Пожалуйста, введите название задачи");
-      valid = false;
-    }
+      if (taskName.trim() === "") {
+        setTaskNameError("Пожалуйста, введите название задачи");
+        valid = false;
+      }
 
-    if (taskDate.trim() === "") {
-      setTaskDateError("Пожалуйста, выберите дату");
-      valid = false;
-    }
+      if (taskDate.trim() === "") {
+        setTaskDateError("Пожалуйста, выберите дату");
+        valid = false;
+      }
 
-    return valid;
-  };
+      return valid;
+    };
 
-  return (
-    <Modal visible={modalVisible} animationType="slide" transparent>
-      <View style={styles.modalContainer}>
-        <View style={styles.modalContent}>
-          <TextInput
-            style={styles.input}
-            placeholder="Введите название задачи"
-            value={taskName}
-            onChangeText={(text) => setTaskName(text)}
-          />
-          <View style={styles.errorContainer}>
-            {taskNameError ? (
-              <Text style={styles.errorText}>{taskNameError}</Text>
-            ) : null}
-          </View>
-          <View style={styles.dateContainer}>
+    return (
+      <Modal visible={modalVisible} animationType="slide" transparent>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
             <TextInput
-              style={styles.dateInput}
-              placeholder="Введите дату"
-              value={taskDate}
-              onChangeText={(text) => setTaskDate(text)}
+              style={styles.input}
+              placeholder="Введите название задачи"
+              value={taskName}
+              onChangeText={(text) => setTaskName(text)}
             />
-            <TouchableOpacity
-              style={styles.calendarButton}
-              onPress={handleToggleCalendar}
-            >
-              <Feather name="calendar" size={24} color="gray" />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.errorContainer}>
-            {taskDateError ? (
-              <Text style={styles.errorText}>{taskDateError}</Text>
-            ) : null}
-          </View>
-          {showCalendar && (
-            <Calendar onDayPress={handleDayPress} hideExtraDays />
-          )}
-          <View style={styles.btnHandle}>
-            <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
-              <Text style={styles.buttonText}>Закрыть</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={handleConfirm}
-              style={styles.confirmButton}
-            >
-              <Text style={styles.buttonText}>Подтвердить</Text>
-            </TouchableOpacity>
+            <View style={styles.errorContainer}>
+              {taskNameError ? (
+                <Text style={styles.errorText}>{taskNameError}</Text>
+              ) : null}
+            </View>
+            <View style={styles.dateContainer}>
+              <TextInput
+                style={styles.dateInput}
+                placeholder="Введите дату"
+                value={taskDate}
+                onChangeText={(text) => setTaskDate(text)}
+              />
+              <TouchableOpacity
+                style={styles.calendarButton}
+                onPress={handleToggleCalendar}
+              >
+                <Feather name="calendar" size={24} color="gray" />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.errorContainer}>
+              {taskDateError ? (
+                <Text style={styles.errorText}>{taskDateError}</Text>
+              ) : null}
+            </View>
+            {showCalendar && (
+              <Calendar onDayPress={handleDayPress} hideExtraDays />
+            )}
+            <View style={styles.btnHandle}>
+              <TouchableOpacity
+                onPress={handleClose}
+                style={styles.closeButton}
+              >
+                <Text style={styles.buttonText}>Закрыть</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleConfirm}
+                style={styles.confirmButton}
+              >
+                <Text style={styles.buttonText}>Подтвердить</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
-    </Modal>
-  );
-});
+      </Modal>
+    );
+  }
+);
 
 const styles = StyleSheet.create({
   modalContainer: {
